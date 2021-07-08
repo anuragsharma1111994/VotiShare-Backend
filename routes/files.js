@@ -18,23 +18,23 @@ let upload = multer({
 }).single('myfile')
 
 router.post('/',(req,res)=>{
-    // Validation Request 
-
-
-
-    // Store Files 
+    
+    
+    
     upload(req,res,async(err)=>{
+        // Validation Request 
         if(!req.file){
             return res.json({
                 error:'all Field are required'
             })
         }
-        
+        // Store Files 
         if (err) {
             return res.status(500).send({
                 error:err.message
             })
         }
+        // Store In DataBASE 
         const file = new File({
             filename : req.file.filename,
             uuid: uuid4(),
@@ -46,9 +46,7 @@ router.post('/',(req,res)=>{
     })
 
 
-    // Store In DataBASE 
 
-    // lINK
 })
 
 module.exports = router;
