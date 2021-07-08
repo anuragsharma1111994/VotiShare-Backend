@@ -10,43 +10,25 @@ let storage = multer.diskStorage({
         const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1E9)}${path.extname(file.originalname)}`
         cb(null,uniqueName)
     }
-})
+})  
 
-let upload = multer({
-    storage:storage,
-    limits:{ fileSize : 1000000 * 100 },
-}).single('myfile')
+let upload = multer({ storage, limits:{ fileSize: 1000000 * 100 }, }).single('myfile'); //100mb
 
-router.post('/',(req,res)=>{
-    
-    
-    
-    upload(req,res,async(err)=>{
-        // Validation Request 
-        if(!req.file){
-            return res.json({
-                error:'all Field are required'
-            })
-        }
-        // Store Files 
-        if (err) {
-            return res.status(500).send({
-                error:err.message
-            })
-        }
-        // Store In DataBASE 
+router.post('/', (req, res) => {
+    upload(req, res, async (err) => {
+      if (err) {
+        return res.status(500).send({ error: err.message });
+      }
         const file = new File({
-            filename : req.file.filename,
+            filename: req.file.filename,
             uuid: uuid4(),
             path: req.file.path,
-            size : req.file.size
+            size: req.file.size
         });
-        const response = await file.save()
-        return res.json({file:`${process.env.APP_BASE_URL}/files/${response.uuid}`})
-    })
+        const response = await file.save();
+        res.json({ file: `${process.env.APP_BASE_URL}/files/${response.uuid}` });
+      });
+});
 
-
-
-})
 
 module.exports = router;
